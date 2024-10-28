@@ -1,7 +1,4 @@
-import os
 import streamlit as st
-
-os.environ['HUGGINGFACEHUB_API_TOKEN'] = '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'
 
 from langchain_huggingface.llms import HuggingFacePipeline
 from langchain.prompts import PromptTemplate
