@@ -1,6 +1,4 @@
 import os
-import torch
-
 
 from fastapi import FastAPI, HTTPException
 from langchain_huggingface.llms import HuggingFacePipeline
@@ -34,14 +32,11 @@ prompt = PromptTemplate(template=template, input_variables=["question"])
 
 llm_chain = prompt | hf_llm
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model.to(device)
-
 @app.post("/generate/")
 async def generate_response(prompt: str):
     try:
         # Encode the input prompt
-        inputs = tokenizer(prompt, return_tensors="pt").to(device)
+        inputs = tokenizer(prompt, return_tensors="pt")
         
         # Generate a response
         with torch.no_grad():
