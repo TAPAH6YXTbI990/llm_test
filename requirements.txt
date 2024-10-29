@@ -3,3 +3,4 @@ langchain
 langchain-huggingface
 fastapi[all]
 requests
+uvicorn
