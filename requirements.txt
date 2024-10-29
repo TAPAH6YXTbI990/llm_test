@@ -3,4 +3,3 @@ langchain
 langchain-huggingface
 fastapi[all]
 requests
-torch
