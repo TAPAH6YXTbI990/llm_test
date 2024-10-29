@@ -39,13 +39,12 @@ async def generate_response(prompt: str):
         inputs = tokenizer(prompt, return_tensors="pt")
         
         # Generate a response
-        with torch.no_grad():
-            outputs = model.generate(
-                **inputs,
-                max_length=150,  # Adjust as needed
-                num_return_sequences=1
-            )
-            
+        outputs = model.generate(
+            **inputs,
+            max_length=150,  # Adjust as needed
+            num_return_sequences=1
+        )
+        
         # Decode the output to get the generated text
         response = tokenizer.decode(outputs[0], skip_special_tokens=True)
         
