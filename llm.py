@@ -1,5 +1,7 @@
 import os
+import torch
 
+from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException
 from langchain_huggingface.llms import HuggingFacePipeline
 from langchain.prompts import PromptTemplate
@@ -32,22 +34,17 @@ prompt = PromptTemplate(template=template, input_variables=["question"])
 
 llm_chain = prompt | hf_llm
 
-@app.post("/generate/")
-async def generate_response(prompt: str):
-    try:
-        # Encode the input prompt
-        inputs = tokenizer(prompt, return_tensors="pt")
-        
-        # Generate a response
-        outputs = model.generate(
-            **inputs,
-            max_length=150,  # Adjust as needed
-            num_return_sequences=1
-        )
-        
-        # Decode the output to get the generated text
-        response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-        
-        return {"response": response}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model.to(device)
+
+class UserQuery(BaseModel):
+    userQ: str
+
+@app.post("/generate")
+async def generate_response(query: UserQuery):
+    response = llm_chain.invoke(query.userQ)
+    return {"response": response}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
